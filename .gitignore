@@ -1,0 +1,27 @@
+# macOS
+.DS_Store
+
+# Python-generated files
+__pycache__/
+*.py[oc]
+build/
+dist/
+wheels/
+*.egg-info
+
+# Virtual environments
+.venv
+
+# Internal docs (prompts, detailed explainers)
+*prompt*
+[Ee]xplain*
+
+# Generated data and model weights
+data/
+weights/
+*.npy
+*.pth
+sample_render.png
+
+# Lock file
+uv.lock
