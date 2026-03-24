@@ -2,6 +2,7 @@
 # NE dépend PAS de scene.py — reçoit des listes de dicts {type, color, position, size}
 
 import math
+from typing import Literal
 import numpy as np
 import pygame
 from config import DEMO_WINDOW_WIDTH, DEMO_WINDOW_HEIGHT, DEMO_FPS, ROOM_SIZE, CAMERA_POSITION
@@ -283,8 +284,8 @@ class InteractiveRenderer:
         texts = [
             "PHASE 3 — Exploration libre",
             f"Caméra: ({self.cam_pos[0]:.1f}, {self.cam_pos[1]:.1f}, {self.cam_pos[2]:.1f})",
-            "ZQSD/WASD = déplacer | Souris = regarder | Espace/Shift = haut/bas",
-            "BACKSPACE = retour | ESC = quitter",
+            "ZQSD = déplacer | Souris = regarder | A/E = haut/bas",
+            "ESC ou BACKSPACE = retour",
         ]
         y = 10
         for txt in texts:
@@ -296,7 +297,7 @@ class InteractiveRenderer:
             surface.blit(text_surf, (12, y))
             y += text_surf.get_height() + 6
 
-    def run(self) -> str:
+    def run(self) -> Literal["back", "quit"]:
         """Lance la boucle Pygame. Retourne 'back' ou 'quit'."""
         pygame.init()
         screen = pygame.display.set_mode((DEMO_WINDOW_WIDTH, DEMO_WINDOW_HEIGHT))
@@ -311,7 +312,7 @@ class InteractiveRenderer:
         proj = _perspective_proj(self.fov, aspect)
 
         running = True
-        result = "quit"
+        result: Literal["back", "quit"] = "quit"
 
         while running:
             dt = clock.tick(DEMO_FPS) / 1000.0
@@ -321,15 +322,12 @@ class InteractiveRenderer:
                     running = False
                     result = "quit"
                 elif event.type == pygame.KEYDOWN:
-                    if event.key == pygame.K_ESCAPE:
-                        running = False
-                        result = "quit"
-                    elif event.key == pygame.K_BACKSPACE:
+                    if event.key in (pygame.K_ESCAPE, pygame.K_BACKSPACE):
                         running = False
                         result = "back"
                 elif event.type == pygame.MOUSEMOTION:
                     dx, dy = event.rel
-                    self.yaw += dx * self.mouse_sensitivity
+                    self.yaw -= dx * self.mouse_sensitivity
                     self.pitch -= dy * self.mouse_sensitivity
                     self.pitch = max(-math.pi / 2 + 0.1,
                                      min(math.pi / 2 - 0.1, self.pitch))
@@ -339,17 +337,17 @@ class InteractiveRenderer:
             forward, right = self._get_forward_right()
             move = np.zeros(3)
 
-            if keys[pygame.K_w] or keys[pygame.K_z]:
+            if keys[pygame.K_z]:
                 move += forward
             if keys[pygame.K_s]:
                 move -= forward
-            if keys[pygame.K_a] or keys[pygame.K_q]:
+            if keys[pygame.K_q]:
                 move -= right
             if keys[pygame.K_d]:
                 move += right
-            if keys[pygame.K_SPACE]:
+            if keys[pygame.K_a]:
                 move[1] += 1.0
-            if keys[pygame.K_LSHIFT] or keys[pygame.K_RSHIFT]:
+            if keys[pygame.K_e]:
                 move[1] -= 1.0
 
             norm = np.linalg.norm(move)

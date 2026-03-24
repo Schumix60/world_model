@@ -1,5 +1,9 @@
 # config.py — Hyperparamètres et constantes (source unique de vérité)
 
+import os
+
+_BASE_DIR = os.path.dirname(os.path.abspath(__file__))
+
 # --- Scène ---
 ROOM_SIZE = 10.0
 NUM_OBJECTS = 3
@@ -19,14 +23,14 @@ IMAGE_SIZE = 64
 # --- Dataset ---
 TRAIN_SIZE = 50000
 VAL_SIZE = 1000
-DATASET_DIR = "data/"
+DATASET_DIR = os.path.join(_BASE_DIR, "data")
 
 # --- Réseau ---
 LEARNING_RATE = 3e-4
 WEIGHT_DECAY = 1e-4
 BATCH_SIZE = 128
 EPOCHS = 50
-MODEL_PATH = "weights/model.pth"
+MODEL_PATH = os.path.join(_BASE_DIR, "weights", "model.pth")
 
 # --- Démo ---
 DEMO_WINDOW_WIDTH = 1200
